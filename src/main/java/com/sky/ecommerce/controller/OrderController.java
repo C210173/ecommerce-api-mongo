@@ -47,6 +47,16 @@ public class OrderController {
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Order>> getUserOrdersByUserId(@RequestHeader("Authorization") String jwt, @PathVariable String userId) throws UserException {
+        User user = userService.findUserProfileByJwt(jwt);
+        if (user.getRole() != Role.ADMIN) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        List<Order> orders = orderService.getOrdersByUser(userId);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<Order>> getAllOrders(@RequestHeader("Authorization") String jwt) throws UserException {
         User user = userService.findUserProfileByJwt(jwt);
